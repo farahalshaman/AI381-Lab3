@@ -62,3 +62,4 @@ jobs:
 
       # TODO (your work): after the gate passes on main, build the image (the Dockerfile packages artifacts/model.joblib),
       # smoke-test it with scripts/smoke_test.sh, and deploy it. See Part 6 of the lab page for both options.
+# Part 5: Run the training and promotion gate for every relevant pull request.
