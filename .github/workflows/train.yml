@@ -39,10 +39,15 @@ jobs:
       - name: Find the champion to beat (from the base branch, or the previous commit)
         run: |
           BASE="${{ github.event.pull_request.base.sha || github.event.before }}"
-          git show "${BASE:-HEAD~1}:artifacts/champion.json" > "$RUNNER_TEMP/champion.json" 2>/dev/null \
-            && echo "Champion found:" && cat "$RUNNER_TEMP/champion.json" \
-            || { echo "No champion on the base yet: the first good model will be promoted."; rm -f "$RUNNER_TEMP/champion.json"; }
-
+          CHAMPION_COMMIT=$(git log -1 --format="%H" --diff-filter=ACMRT "$BASE" -- artifacts/champion.json)
+          if [ -n "$CHAMPION_COMMIT" ]; then
+            git show "$CHAMPION_COMMIT:artifacts/champion.json" > "$RUNNER_TEMP/champion.json"
+            echo "Champion found:"
+            cat "$RUNNER_TEMP/champion.json"
+          else
+            echo "No champion in history: the first good model will be promoted."
+            rm -f "$RUNNER_TEMP/champion.json"
+          fi
       - name: Train the candidates
         run: |
           echo "BATCH=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
