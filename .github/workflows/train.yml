@@ -39,7 +39,7 @@ jobs:
       - name: Find the champion to beat (from the base branch, or the previous commit)
         run: |
           BASE="${{ github.event.pull_request.base.sha || github.event.before }}"
-          CHAMPION_COMMIT=$(git log -1 --format="%H" "$BASE" -- artifacts/champion.json)
+          CHAMPION_COMMIT=$(git log -1 --format="%H" --diff-filter=ACMRT "$BASE" -- artifacts/champion.json)
           if [ -n "$CHAMPION_COMMIT" ]; then
             git show "$CHAMPION_COMMIT:artifacts/champion.json" > "$RUNNER_TEMP/champion.json"
             echo "Champion found:"
